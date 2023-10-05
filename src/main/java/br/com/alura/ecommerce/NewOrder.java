@@ -12,7 +12,12 @@ import java.util.concurrent.ExecutionException;
 
 public class NewOrder {
 
-    public void sendMessage() throws ExecutionException, InterruptedException {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        sendMessage();
+    }
+    public static void sendMessage() throws ExecutionException, InterruptedException {
+
+
         var producer = new KafkaProducer<String, String>(properties());
         var value = "1312, 1001, 12000";
         var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER",value,value);
@@ -30,7 +35,7 @@ public class NewOrder {
 
     }
 
-    private Properties properties() {
+    private static Properties properties() {
         Properties properties = new Properties();
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"127.0.0.1:9092");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());

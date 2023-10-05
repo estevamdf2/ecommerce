@@ -5,10 +5,7 @@ import br.com.alura.ecommerce.NewOrder;
 import java.util.concurrent.ExecutionException;
 
 public class Main {
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
-
+    public static void main(String[] args)  {
         System.out.println("Hello world!");
-        NewOrder order = new NewOrder();
-        order.sendMessage();
     }
 }
