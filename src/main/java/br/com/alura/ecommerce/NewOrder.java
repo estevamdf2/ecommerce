@@ -20,6 +20,7 @@ public class NewOrder {
 
 
         var producer = new KafkaProducer<String, String>(properties());
+        for (int i=0; i<100; i++) {
             var key = UUID.randomUUID().toString();
             var value = key + ", 1001, 12000";
             var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", key, value);
@@ -34,6 +35,7 @@ public class NewOrder {
             var emailRecord = new ProducerRecord<>("ECOMMERCE_SEND_EMAIL", key, email);
             producer.send(record, callback).get();
             producer.send(emailRecord, callback).get();
+        }
 
     }
 
@@ -42,6 +44,7 @@ public class NewOrder {
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"127.0.0.1:9092");
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+
         return properties;
     }
 }
