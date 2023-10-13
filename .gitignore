@@ -31,6 +31,10 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+## Application
+/data/kafka/data
+/data/zookeeper
+
 ### VS Code ###
 .vscode/
 
