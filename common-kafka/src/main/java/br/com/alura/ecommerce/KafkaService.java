@@ -11,16 +11,16 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
-class KafkaService<T> implements Closeable {
+public class KafkaService<T> implements Closeable {
     private final KafkaConsumer<String, String> consumer;
     private final ConsumerFunction<T> parse;
 
-    KafkaService(String groupId, String topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> properties) {
+    public KafkaService(String groupId, String topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> properties) {
         this(parse, groupId, type, properties);
         consumer.subscribe(Collections.singletonList(topic));
     }
 
-    KafkaService(String groupId, Pattern topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> properties) {
+    public KafkaService(String groupId, Pattern topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> properties) {
         this(parse, groupId, type, properties);
         consumer.subscribe(topic);
 
@@ -31,7 +31,7 @@ class KafkaService<T> implements Closeable {
         this.consumer = new KafkaConsumer<>(getProperties(type,groupId, properties));
     }
 
-    void run() {
+    public void run() {
         while (true) {
             var records = consumer.poll(Duration.ofMillis(100));
             if (!records.isEmpty()) {
@@ -39,10 +39,7 @@ class KafkaService<T> implements Closeable {
                 for (var record: records){
                     try {
                         parse.consume((ConsumerRecord<String, T>) record);
-                    } catch (ExecutionException e) {
-                        // so far, just logging the exception for this message
-                        throw new RuntimeException(e);
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
                         // so far, just logging the exception for this message
                         throw new RuntimeException(e);
                     }
