@@ -23,6 +23,49 @@ ecommerce_kafka_1       /etc/confluent/docker/run   Up      0.0.0.0:9092->9092/t
 ecommerce_zookeeper_1   /etc/confluent/docker/run   Up      0.0.0.0:2181->2181/tcp,:::2181->2181/tcp, 2888/tcp, 3888/tcp
 ```
 
+### Startando o serviço http
+
+No módulo `service-http-ecommerce` start a classe **HttpEcommerceService** ela subira o servidor Jetty para receber as requisições de novas ordens de compra.
+
+Saída esperada
+```shell
+[main] INFO org.eclipse.jetty.util.log - Logging initialized @425ms to org.eclipse.jetty.util.log.Slf4jLog
+[main] INFO org.apache.kafka.clients.producer.ProducerConfig - ProducerConfig values: 
+	acks = 1
+	batch.size = 16384
+	bootstrap.servers = [127.0.0.1:9092]
+	buffer.memory = 33554432
+	client.dns.lookup = default
+	...
+	[main] INFO org.eclipse.jetty.server.Server - jetty-9.4.23.v20191118; built: 2019-11-18T19:22:48.413Z; git: abbccc65d6cf5e8806dd35881147d618b9b5740b; jvm 17.0.8.1+8-LTS
+[main] INFO org.eclipse.jetty.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@3febb011{/,null,AVAILABLE}
+[main] INFO org.eclipse.jetty.server.AbstractConnector - Started ServerConnector@6842775d{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+[main] INFO org.eclipse.jetty.server.Server - Started @1175ms
+[kafka-producer-network-thread | producer-2] INFO org.apache.kafka.clients.Metadata - [Producer clientId=producer-2] Cluster ID: 4yWLUqp_Tw6LqgH9lfA9JA
+[kafka-producer-network-thread | producer-1] INFO org.apache.kafka.clients.Metadata - [Producer clientId=producer-1] Cluster ID: 4yWLUqp_Tw6LqgH9lfA9JA
+	
+```
+Agora realize uma requisição de compra pelo seu browser chamando o endereço
+`http://localhost:8080/new?email="email@email.com"&ammount=110`
+
+Você terá as seguintes respostas do serviço HTTP e do FraudDetector, respectivamente:
+
+```shell
+sucesso enviando... ECOMMERCE_NEW_ORDER:::partition 0/ offset 80/ timestamp 1697482760996
+sucesso enviando... ECOMMERCE_SEND_EMAIL:::partition 0/ offset 80/ timestamp 1697482761033
+New order sent successfully.
+```
+
+```shell
+Processing new order, checking for fraud
+"email@email.com"
+Order{, orderId='3ae491db-252b-4235-96c1-b93a2a769faa', amount=110.00}
+0
+80
+Approved: Order{, orderId='3ae491db-252b-4235-96c1-b93a2a769faa', amount=110.00}
+sucesso enviando... ECOMMERCE_ORDER_APPROVED:::partition 0/ offset 50/ timestamp 1697482766018
+
+```
 ### Listando os tópicos
 
 Você pode utilizar o seguinte programa [Kafkatool](https://kafkatool.com/download.html) para visualizar os tópicos criados junto ao kafka server.
