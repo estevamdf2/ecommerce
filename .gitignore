@@ -32,8 +32,10 @@ build/
 !**/src/test/**/build/
 
 ## Application
-/data/kafka/data
+/data/kafka-1/data
+/data/kafka-2/data
 /data/zookeeper
+/data/kafka/data/cleaner-offset-checkpoint
 
 ### VS Code ###
 .vscode/
