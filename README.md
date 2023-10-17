@@ -129,3 +129,6 @@ FraudeDetectorService ECOMMERCE_NEW_ORDER 1          14              45         
 FraudeDetectorService ECOMMERCE_NEW_ORDER 2          20              56              36              consumer-1-f59f8ba7-deb6-452b-babf-0dab5607e187 /172.19.0.1     consumer
 
 ```
+
+Apagar um tópicos
+`docker exec -it ecommerce_kafka-2_1 /bin/kafka-topics --delete --bootstrap-server localhost:9093 --topic ECOMMERCE_.*`

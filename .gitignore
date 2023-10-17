@@ -20,6 +20,7 @@ target/
 .settings
 .springBeans
 .sts4-cache
+encodings.xml
 
 ### NetBeans ###
 /nbproject/private/
@@ -32,8 +33,11 @@ build/
 !**/src/test/**/build/
 
 ## Application
-/data/kafka/data
+/data/kafka-1/data/*
 /data/zookeeper
+/data/kafka/data
+/data/kafka-2/data
+/data/kafka-3/data
 
 ### VS Code ###
 .vscode/
