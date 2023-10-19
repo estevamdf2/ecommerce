@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 public class KafkaService<T> implements Closeable {
-    private final KafkaConsumer<String, String> consumer;
+    private final KafkaConsumer<String, Message<T>> consumer;
     private final ConsumerFunction<T> parse;
 
     public KafkaService(String groupId, String topic, ConsumerFunction<T> parse, Class<T> type, Map<String, String> properties) {
@@ -38,7 +38,7 @@ public class KafkaService<T> implements Closeable {
                 System.out.println("Encontrei " + records.count() +" registros");
                 for (var record: records){
                     try {
-                        parse.consume((ConsumerRecord<String, T>) record);
+                        parse.consume((ConsumerRecord<String, Message<T>>) record);
                     } catch (Exception e) {
                         // so far, just logging the exception for this message
                         throw new RuntimeException(e);
@@ -56,7 +56,6 @@ public class KafkaService<T> implements Closeable {
         properties.setProperty(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         properties.setProperty(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
         properties.setProperty(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1"); //Fazer o autocommit de 1 em 1.
-        properties.setProperty(GsonDeserializer.TYPE_CONFIG, type.getName());
         properties.putAll(overrideProperties);
         return properties;
     }
