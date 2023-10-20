@@ -1,6 +1,7 @@
 package br.com.alura.br.com.alura.ecommerce;
 
 import br.com.alura.ecommerce.KafkaService;
+import br.com.alura.ecommerce.Message;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.io.File;
@@ -17,7 +18,7 @@ public class ReadingReportService {
         var readingReport = new ReadingReportService();
 
         try (var service = new KafkaService<>(ReadingReportService.class.getSimpleName(),
-                "USER_GENERATE_READING_REPORT",
+                "ECOMMERCE_USER_GENERATE_READING_REPORT",
                 readingReport::parse,
                 User.class,
                 Map.of())) {
@@ -25,11 +26,12 @@ public class ReadingReportService {
         }
     }
 
-    private void parse(ConsumerRecord<String, User> record) throws IOException {
+    private void parse(ConsumerRecord<String, Message<User>> record) throws IOException {
         System.out.println("-------------------------------------");
         System.out.println("Processing report for " + record.value());
 
-        var user = record.value();
+        var message = record.value();
+        var user = message.getPayload();
         var target = new File(user.getReportPath());
         IO.copyTo(SOURCE, target);
         IO.append(target, "Created for " + user.getUuid());

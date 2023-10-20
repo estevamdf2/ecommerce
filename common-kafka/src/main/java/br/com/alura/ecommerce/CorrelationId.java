@@ -6,7 +6,11 @@ public class CorrelationId {
 
     private final String id;
 
-    CorrelationId() {
-        this.id = UUID.randomUUID().toString();
+    public CorrelationId(String title) {
+        this.id = title + "("+ UUID.randomUUID().toString() +")";
+    }
+
+    public CorrelationId continueWith(String title) {
+        return new CorrelationId(id + "-" + title);
     }
 }
