@@ -9,14 +9,13 @@ import java.util.concurrent.ExecutionException;
 
 public class FraudeDetectorService {
 
-    private final KafkaDispatcher<Order> orderDispatcher = new KafkaDispatcher<>(FraudeDetectorService.class.getSimpleName());
+    private final KafkaDispatcher<Order> orderDispatcher = new KafkaDispatcher<>();
     public static void main(String[] args) {
         var fraudeService = new FraudeDetectorService();
 
         try(var service = new KafkaService(FraudeDetectorService.class.getSimpleName(),
                 "ECOMMERCE_NEW_ORDER",
                 fraudeService::parse,
-                Order.class,
                 Map.of())){
             service.run();
         }
