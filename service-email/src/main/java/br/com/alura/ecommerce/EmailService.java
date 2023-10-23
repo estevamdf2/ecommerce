@@ -1,10 +1,11 @@
 package br.com.alura.ecommerce;
 import br.com.alura.ecommerce.consumer.ConsumerService;
+import br.com.alura.ecommerce.consumer.ServiceRunner;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 public class EmailService implements ConsumerService<Email> {
     public static void main(String[] args) {
-        new ServiceProvider().run(EmailService::new);
+        new ServiceRunner(EmailService::new).start(5);
     }
     @Override
     public void parse(ConsumerRecord<String, Message<Email>> record) {

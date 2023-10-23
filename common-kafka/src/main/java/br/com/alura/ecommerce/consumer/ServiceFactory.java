@@ -1,4 +1,4 @@
-package br.com.alura.ecommerce;
+package br.com.alura.ecommerce.consumer;
 
 import br.com.alura.ecommerce.consumer.ConsumerService;
 
