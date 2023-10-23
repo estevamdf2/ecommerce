@@ -1,7 +1,7 @@
 package br.com.alura.br.com.alura.ecommerce;
 
 import br.com.alura.ecommerce.CorrelationId;
-import br.com.alura.ecommerce.KafkaDispatcher;
+import br.com.alura.ecommerce.dispatcher.KafkaDispatcher;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
