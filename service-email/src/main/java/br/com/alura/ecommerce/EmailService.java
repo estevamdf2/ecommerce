@@ -1,22 +1,13 @@
 package br.com.alura.ecommerce;
-import br.com.alura.ecommerce.consumer.KafkaService;
+import br.com.alura.ecommerce.consumer.ConsumerService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import java.util.Map;
-
-public class EmailService {
+public class EmailService implements ConsumerService<Email> {
     public static void main(String[] args) {
-        var emailService = new EmailService();
-        try(var service = new KafkaService(EmailService.class.getSimpleName(),
-                "ECOMMERCE_SEND_EMAIL",
-                emailService::parse,
-                Map.of())){
-            service.run();
-        }
-
+        new ServiceProvider().run(EmailService::new);
     }
-
-    private void parse(ConsumerRecord<String, Email> record){
+    @Override
+    public void parse(ConsumerRecord<String, Message<Email>> record) {
         System.out.println("-------------------------------------");
         System.out.println("Send email");
         System.out.println(record.key());
@@ -24,11 +15,21 @@ public class EmailService {
         System.out.println(record.partition());
         System.out.println(record.partition());
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            System.out.println("email send");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("email send");
+    }
+
+    @Override
+    public String getTopic() {
+        return "ECOMMERCE_SEND_EMAIL";
+    }
+
+    @Override
+    public String getConsumerGroup() {
+        return EmailService.class.getSimpleName();
     }
 }
