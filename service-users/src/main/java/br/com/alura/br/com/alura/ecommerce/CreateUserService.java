@@ -1,7 +1,9 @@
 package br.com.alura.br.com.alura.ecommerce;
 
+import br.com.alura.ecommerce.consumer.ConsumerService;
 import br.com.alura.ecommerce.consumer.KafkaService;
 import br.com.alura.ecommerce.Message;
+import br.com.alura.ecommerce.consumer.ServiceRunner;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.math.BigDecimal;
@@ -11,7 +13,7 @@ import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
 
-public class CreateUserService {
+public class CreateUserService implements ConsumerService<Order> {
 
     private final Connection connection;
 
@@ -30,17 +32,20 @@ public class CreateUserService {
 
     }
     public static void main(String[] args) throws SQLException {
-        var userService = new CreateUserService();
-
-        try(var service = new KafkaService(CreateUserService.class.getSimpleName(),
-                "ECOMMERCE_NEW_ORDER",
-                userService::parse,
-                Map.of())){
-            service.run();
-        }
+        new ServiceRunner<>(CreateUserService::new).start(1);
     }
 
-    private void parse(ConsumerRecord<String, Message<Order>> record) throws SQLException {
+    @Override
+    public String getTopic() {
+        return "ECOMMERCE_NEW_ORDER";
+    }
+
+    @Override
+    public String getConsumerGroup() {
+        return CreateUserService.class.getSimpleName();
+    }
+
+    public void parse(ConsumerRecord<String, Message<Order>> record) throws SQLException {
         System.out.println("-------------------------------------");
         System.out.println("Processing new order, checking for new user");
         System.out.println(record.value());
@@ -60,10 +65,11 @@ public class CreateUserService {
     private void insertNewUser(String email) throws SQLException {
         String sql = "insert into Users (uuid, email) values (?,?)";
         var insert = connection.prepareStatement(sql);
-        insert.setString(1, UUID.randomUUID().toString());
+        var uuid = UUID.randomUUID().toString();
+        insert.setString(1, uuid);
         insert.setString(2, email);
         insert.execute();
-        System.out.println("Usuário uuid e " +email + " adicionado");
+        System.out.println("Usuário " + uuid + " e " + email + " adicionado");
 
     }
 
