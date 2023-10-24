@@ -1,15 +1,12 @@
 package br.com.ecommerce;
 
-import br.com.alura.ecommerce.CorrelationId;
-import br.com.alura.ecommerce.Email;
-import br.com.alura.ecommerce.Message;
-import br.com.alura.ecommerce.consumer.ConsumerService;
-import br.com.alura.ecommerce.consumer.KafkaService;
-import br.com.alura.ecommerce.consumer.ServiceRunner;
-import br.com.alura.ecommerce.dispatcher.KafkaDispatcher;
+import br.com.alura.ecommerce.ecommerce.Email;
+import br.com.alura.ecommerce.ecommerce.Message;
+import br.com.alura.ecommerce.ecommerce.consumer.ConsumerService;
+import br.com.alura.ecommerce.ecommerce.consumer.ServiceRunner;
+import br.com.alura.ecommerce.ecommerce.dispatcher.KafkaDispatcher;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class EmailNewOrderService implements ConsumerService<Order> {
