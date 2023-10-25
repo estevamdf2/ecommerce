@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -27,26 +28,28 @@ public class NewOrderServlet extends HttpServlet {
 
             //Receive parameters sent http get
             var email = req.getParameter("email");
-            var amount = new BigDecimal(req.getParameter("ammount")).setScale(2, RoundingMode.HALF_UP);
+            var amount = new BigDecimal(req.getParameter("amount")).setScale(2, RoundingMode.HALF_UP);
+            var orderId = req.getParameter("uuid");
 
-            var userId = UUID.randomUUID().toString();
-            var orderId = UUID.randomUUID().toString();
-            var order = new Order(userId, amount, email);
+            var order = new Order(orderId, amount, email);
 
-            orderDispatcher.send("ECOMMERCE_NEW_ORDER",
-                    email,
-                    new CorrelationId(NewOrderServlet.class.getSimpleName()),
-                    order);
+            try (var database = new OrdersDatabase()) {
+                if (database.saveNew(order)) {
+                    orderDispatcher.send("ECOMMERCE_NEW_ORDER", email,
+                            new CorrelationId(NewOrderServlet.class.getSimpleName()),
+                            order);
 
-            var message = "New order sent successfully.";
-            System.out.println(message);
+                    System.out.println("New order sent successfully.");
+                    resp.setStatus(HttpServletResponse.SC_OK);
+                    resp.getWriter().println("New order sent");
+                } else {
+                    System.out.println("Old order received.");
+                    resp.setStatus(HttpServletResponse.SC_OK);
+                    resp.getWriter().println("Old order received");
+                }
+            }
 
-            resp.setStatus(HttpServletResponse.SC_OK);
-            resp.getWriter().println(message);
-
-        } catch (ExecutionException e) {
-            throw new ServletException(e);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | SQLException | ExecutionException e) {
             throw new ServletException(e);
         }
     }
